@@ -1,14 +1,13 @@
-FROM node:18
+# frontend/Dockerfile (самая простая)
+FROM node:18-alpine
+
 WORKDIR /app
 
-COPY package.json package.json
-COPY package-lock.json package-lock.json
-
-RUN npm install
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
-# Эта команда запустит встроенный сервер на Node.js, который будет раздавать
-# содержимое директории /app/build на порте 8000
-CMD ["npx", "-y", "http-server", "-p", "8000", "/app/build"]
+# Команда для копирования в volume
+CMD ["sh", "-c", "cp -r /app/build/. /frontend_static/ && tail -f /dev/null"]
